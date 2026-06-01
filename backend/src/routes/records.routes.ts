@@ -6,14 +6,14 @@ import { getRecords, postRecord } from '../controllers/records.controller';
 
 const router = Router();
 
-// Every records route is tenant-scoped + authenticated.
-// Order matters: identify the tenant, THEN validate the token against it.
+// Toda ruta de records está acotada al tenant + autenticada.
+// El orden importa: primero identificar el tenant, LUEGO validar el token contra él.
 router.use(identifyTenant);
 
-// Reading: any authenticated role of the tenant.
+// Lectura: cualquier rol autenticado del tenant.
 router.get('/', checkAuth('ADMIN', 'USER'), asyncHandler(getRecords));
 
-// Writing: restricted to ADMIN to showcase role-based access control.
+// Escritura: restringida a ADMIN para demostrar el control de acceso basado en roles.
 router.post('/', checkAuth('ADMIN'), asyncHandler(postRecord));
 
 export default router;

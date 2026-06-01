@@ -5,11 +5,11 @@ import { listRecordsByTenant, createRecordForTenant } from '../services/records.
 const DEFAULT_LIMIT = 10;
 const MAX_LIMIT = 100;
 
-/** GET /api/v1/records?limit=&offset= - only the current tenant's records. */
+/** GET /api/v1/records?limit=&offset= - solo los registros del tenant actual. */
 export async function getRecords(req: Request, res: Response): Promise<void> {
-  const tenant = req.tenant!; // guaranteed by identifyTenant
+  const tenant = req.tenant!; // garantizado por identifyTenant
 
-  // Sanitize pagination input (clamp + safe defaults).
+  // Sanea los parámetros de paginación (acotado + valores por defecto seguros).
   const limit = Math.min(
     Math.max(parseInt(String(req.query.limit ?? DEFAULT_LIMIT), 10) || DEFAULT_LIMIT, 1),
     MAX_LIMIT
@@ -20,7 +20,7 @@ export async function getRecords(req: Request, res: Response): Promise<void> {
   res.json(result);
 }
 
-/** POST /api/v1/records - inserts a record auto-bound to the current tenant. */
+/** POST /api/v1/records - inserta un registro asociado automáticamente al tenant actual. */
 export async function postRecord(req: Request, res: Response): Promise<void> {
   const tenant = req.tenant!;
   const { name, amount } = req.body ?? {};
@@ -33,7 +33,7 @@ export async function postRecord(req: Request, res: Response): Promise<void> {
     throw new AppError(400, 'amount must be a non-negative number');
   }
 
-  // tenant.id comes from the server context, never from the request body.
+  // tenant.id proviene del contexto del servidor, nunca del cuerpo del request.
   const record = await createRecordForTenant(tenant.id, name.trim(), numericAmount);
   res.status(201).json(record);
 }

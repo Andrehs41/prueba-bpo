@@ -10,9 +10,10 @@ export interface UserRow extends RowDataPacket {
 }
 
 /**
- * Look up a user by email *within a given tenant*.
- * Email is unique per tenant, so the tenant scope is part of the lookup -
- * this prevents a user of tenant A from authenticating against tenant B.
+ * Busca un usuario por correo *dentro de un tenant dado*.
+ * El correo es único por tenant, así que el alcance del tenant forma parte de
+ * la búsqueda; esto evita que un usuario del tenant A se autentique contra el
+ * tenant B.
  */
 export async function findUserByEmailAndTenant(
   email: string,

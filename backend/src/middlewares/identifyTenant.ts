@@ -8,9 +8,10 @@ export const TENANT_HEADER = 'x-tenant-id';
 /**
  * identifyTenant
  * --------------
- * Reads the custom `X-Tenant-ID` header, validates the tenant against the DB
- * and attaches the full tenant config to `req.tenant`. Everything downstream
- * trusts `req.tenant` instead of any client-supplied value.
+ * Lee el header personalizado `X-Tenant-ID`, valida el tenant contra la base de
+ * datos y adjunta la configuración completa del tenant a `req.tenant`. Todo lo
+ * que viene después confía en `req.tenant` en lugar de cualquier valor enviado
+ * por el cliente.
  */
 export const identifyTenant = asyncHandler(
   async (req: Request, _res: Response, next: NextFunction) => {

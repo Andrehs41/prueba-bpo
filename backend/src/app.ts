@@ -10,13 +10,13 @@ export function createApp() {
   app.use(
     cors({
       origin: env.corsOrigin,
-      // Allow the custom tenant header from the browser.
+      // Permite el header personalizado del tenant desde el navegador.
       allowedHeaders: ['Content-Type', 'Authorization', 'X-Tenant-ID'],
     })
   );
   app.use(express.json());
 
-  // All business endpoints live under /api/v1.
+  // Todos los endpoints de negocio viven bajo /api/v1.
   app.use('/api/v1', apiRoutes);
 
   app.use(notFound);

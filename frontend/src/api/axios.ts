@@ -5,30 +5,30 @@ import type { RootState } from '../app/store';
 const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:4000/api/v1';
 
 /**
- * Custom Axios instance shared across the app (DRY: base URL + interceptors in
- * one place). All network calls go through `api`.
+ * Instancia personalizada de Axios compartida en toda la app (DRY: la URL base
+ * + los interceptors en un solo lugar). Todas las llamadas de red pasan por `api`.
  */
 export const api = axios.create({
   baseURL: API_URL,
 });
 
 /**
- * Store injection avoids a circular import (store -> slices -> api -> store).
- * main.tsx calls injectStore(store) once at startup; the interceptors then read
- * the LIVE global state at request time.
+ * La inyección del store evita un import circular (store -> slices -> api -> store).
+ * main.tsx llama a injectStore(store) una vez al arrancar; los interceptors leen
+ * entonces el estado global EN VIVO en el momento del request.
  */
 let injectedStore: Store<RootState> | null = null;
 export function injectStore(store: Store<RootState>) {
   injectedStore = store;
 }
 
-// REQUEST INTERCEPTOR: auto-attach X-Tenant-ID (from global state) + JWT.
+// INTERCEPTOR DE REQUEST: adjunta automáticamente X-Tenant-ID (del estado global) + JWT.
 api.interceptors.request.use((config) => {
   const state = injectedStore?.getState();
 
   const tenant = state?.tenant.current;
   if (tenant) {
-    // Send the slug; the backend resolves either slug or id.
+    // Enviamos el slug; el backend resuelve tanto el slug como el id.
     config.headers['X-Tenant-ID'] = tenant.slug || String(tenant.id);
   }
 

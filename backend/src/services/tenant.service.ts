@@ -9,8 +9,8 @@ interface TenantRow extends RowDataPacket {
 }
 
 /**
- * Public list of tenants (id, slug, name) for the login selector.
- * Exposes no sensitive data; ordered alphabetically by name.
+ * Lista pública de tenants (id, slug, name) para el selector del login.
+ * No expone datos sensibles; ordenada alfabéticamente por nombre.
  */
 export async function listTenants(): Promise<TenantContext[]> {
   const [rows] = await pool.query<TenantRow[]>(
@@ -20,9 +20,9 @@ export async function listTenants(): Promise<TenantContext[]> {
 }
 
 /**
- * Resolve a tenant by the value coming from the X-Tenant-ID header.
- * The header may carry either the numeric id or the slug, so we accept both.
- * Returns null when no tenant matches (caller decides the HTTP response).
+ * Resuelve un tenant a partir del valor que viene en el header X-Tenant-ID.
+ * El header puede traer el id numérico o el slug, así que aceptamos ambos.
+ * Devuelve null cuando ningún tenant coincide (quien llama decide la respuesta HTTP).
  */
 export async function findTenantByHeader(rawValue: string): Promise<TenantContext | null> {
   const asNumber = Number(rawValue);

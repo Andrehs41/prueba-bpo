@@ -4,10 +4,10 @@ import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 
 /**
- * Routing:
- *   /login                       -> public login
- *   /:tenantSlug/dashboard       -> protected (Route Guard + tenant in URL)
- *   *                            -> redirect to /login
+ * Enrutamiento:
+ *   /login                       -> login público
+ *   /:tenantSlug/dashboard       -> protegido (Route Guard + tenant en la URL)
+ *   *                            -> redirige a /login
  */
 export default function App() {
   return (
@@ -15,7 +15,7 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        {/* All tenant-scoped routes go through the guard. */}
+        {/* Todas las rutas acotadas al tenant pasan por el guard. */}
         <Route path="/:tenantSlug" element={<ProtectedLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />

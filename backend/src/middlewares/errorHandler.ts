@@ -1,14 +1,15 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../utils/AppError';
 
-/** 404 handler for unmatched routes. */
+/** Manejador 404 para rutas no coincidentes. */
 export function notFound(_req: Request, res: Response): void {
   res.status(404).json({ error: 'Route not found' });
 }
 
 /**
- * Central error handler. Translates AppError (and anything unexpected) into a
- * consistent JSON shape so controllers never format error responses themselves.
+ * Manejador de errores central. Traduce AppError (y cualquier cosa inesperada)
+ * a una forma JSON consistente para que los controladores nunca formateen las
+ * respuestas de error por sí mismos.
  */
 export function errorHandler(
   err: unknown,

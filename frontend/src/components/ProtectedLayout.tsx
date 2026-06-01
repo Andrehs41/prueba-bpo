@@ -3,14 +3,15 @@ import { Navigate, Outlet, useParams } from 'react-router-dom';
 import { useAppSelector } from '../app/hooks';
 
 /**
- * Route Guard + Layout for tenant-scoped routes (/:tenantSlug/*).
+ * Route Guard + Layout para las rutas acotadas al tenant (/:tenantSlug/*).
  *
- * Protects the view when:
- *   - the user is not authenticated (no token), or
- *   - the :tenantSlug in the URL does not match the authenticated tenant.
+ * Protege la vista cuando:
+ *   - el usuario no está autenticado (sin token), o
+ *   - el :tenantSlug de la URL no coincide con el tenant autenticado.
  *
- * The second check stops a user from simply editing the URL to peek at another
- * tenant. (The backend is still the real authority - this is just UX defense.)
+ * La segunda comprobación impide que un usuario simplemente edite la URL para
+ * espiar otro tenant. (El backend sigue siendo la autoridad real; esto es solo
+ * una defensa a nivel de UX.)
  */
 export default function ProtectedLayout() {
   const { tenantSlug } = useParams();

@@ -5,7 +5,7 @@ import { login } from '../controllers/auth.controller';
 
 const router = Router();
 
-// Login needs the tenant context (to scope the user lookup) but NOT a token.
+// El login necesita el contexto del tenant (para acotar la búsqueda del usuario) pero NO un token.
 router.post('/login', identifyTenant, asyncHandler(login));
 
 export default router;

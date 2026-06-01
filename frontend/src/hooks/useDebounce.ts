@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Returns a debounced copy of `value` that only updates after `delay` ms of
- * no changes. Used to avoid re-filtering the records table on every keystroke.
+ * Devuelve una copia con debounce de `value` que solo se actualiza tras `delay`
+ * ms sin cambios. Se usa para evitar re-filtrar la tabla de registros en cada
+ * pulsación de tecla.
  */
 export function useDebounce<T>(value: T, delay = 300): T {
   const [debounced, setDebounced] = useState(value);

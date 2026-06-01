@@ -7,11 +7,12 @@ import { findUserByEmailAndTenant } from '../services/user.service';
 
 /**
  * POST /api/v1/auth/login
- * Authenticates a user *within the tenant from X-Tenant-ID* and issues a JWT
- * that embeds the tenant id + role. Runs after identifyTenant.
+ * Autentica a un usuario *dentro del tenant indicado por X-Tenant-ID* y emite un
+ * JWT que incrusta el id del tenant + el rol. Se ejecuta después de
+ * identifyTenant.
  */
 export async function login(req: Request, res: Response): Promise<void> {
-  const tenant = req.tenant!; // guaranteed by identifyTenant
+  const tenant = req.tenant!; // garantizado por identifyTenant
   const { email, password } = req.body ?? {};
 
   if (typeof email !== 'string' || typeof password !== 'string') {
@@ -19,7 +20,7 @@ export async function login(req: Request, res: Response): Promise<void> {
   }
 
   const user = await findUserByEmailAndTenant(email, tenant.id);
-  // Same generic message whether the user is missing or the password is wrong.
+  // Mismo mensaje genérico tanto si el usuario no existe como si la contraseña es incorrecta.
   if (!user || !(await bcrypt.compare(password, user.password_hash))) {
     throw new AppError(401, 'Invalid credentials');
   }

@@ -6,7 +6,7 @@ import { injectStore } from './api/axios';
 import App from './App';
 import './index.css';
 
-// Give the Axios interceptors access to the live store before any request runs.
+// Damos a los interceptors de Axios acceso al store en vivo antes de que se ejecute cualquier request.
 injectStore(store);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

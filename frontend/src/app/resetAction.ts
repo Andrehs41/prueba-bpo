@@ -1,9 +1,9 @@
 import { createAction } from '@reduxjs/toolkit';
 
 /**
- * Global "kill switch" action.
- * Dispatched on logout or when switching tenant. The root reducer listens for
- * it and resets EVERY slice back to its initial state, guaranteeing no data
- * from the previous tenant lingers in memory (anti data-bleeding).
+ * Acción global de "interruptor de apagado".
+ * Se despacha al cerrar sesión o al cambiar de tenant. El root reducer la
+ * escucha y restablece TODOS los slices a su estado inicial, garantizando que
+ * ningún dato del tenant anterior quede en memoria (anti data-bleeding).
  */
 export const resetStore = createAction('app/reset');

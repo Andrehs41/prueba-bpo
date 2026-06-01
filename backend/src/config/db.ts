@@ -2,9 +2,9 @@ import mysql from 'mysql2/promise';
 import { env } from './env';
 
 /**
- * Shared MySQL connection pool.
- * A single pool is reused across the app (DRY): controllers/services never
- * open their own connections, they borrow from here.
+ * Pool de conexiones MySQL compartido.
+ * Un único pool se reutiliza en toda la app (DRY): los controladores/servicios
+ * nunca abren sus propias conexiones, las toman prestadas de aquí.
  */
 export const pool = mysql.createPool({
   host: env.db.host,
@@ -19,7 +19,7 @@ export const pool = mysql.createPool({
   charset: 'utf8mb4',
 });
 
-/** Quick connectivity check used at server boot. */
+/** Comprobación rápida de conectividad usada al arrancar el servidor. */
 export async function assertDbConnection(): Promise<void> {
   const conn = await pool.getConnection();
   try {

@@ -30,20 +30,21 @@ const initialState: AuthState = {
 };
 
 /**
- * login: authenticates against a specific tenant.
- * The tenant slug must already be in the store so the Axios interceptor can
- * attach X-Tenant-ID; we set it optimistically before firing the request.
+ * login: autentica contra un tenant específico.
+ * El slug del tenant ya debe estar en el store para que el interceptor de Axios
+ * pueda adjuntar X-Tenant-ID; lo establecemos de forma optimista antes de
+ * disparar el request.
  */
 export const login = createAsyncThunk<
   LoginResponse,
   { tenantSlug: string; email: string; password: string },
   { rejectValue: string }
 >('auth/login', async ({ tenantSlug, email, password }, { dispatch, rejectWithValue }) => {
-  // Seed the tenant so the request interceptor can inject X-Tenant-ID.
+  // Sembramos el tenant para que el interceptor del request pueda inyectar X-Tenant-ID.
   dispatch(setTenant({ id: 0, slug: tenantSlug, name: tenantSlug }));
   try {
     const { data } = await api.post<LoginResponse>('/auth/login', { email, password });
-    // Replace the optimistic tenant with the authoritative one from the server.
+    // Reemplaza el tenant optimista con el definitivo que devuelve el servidor.
     dispatch(setTenant(data.tenant));
     return data;
   } catch (err) {

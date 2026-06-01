@@ -14,14 +14,14 @@ interface JwtPayload {
 /**
  * checkAuth
  * ---------
- * Validates the JWT from the Authorization header and, crucially, verifies that
- * the token's tenant matches the tenant resolved by identifyTenant. This blocks
- * "cross-tenant" tokens: a valid token for tenant A cannot be replayed against
- * tenant B by just swapping the X-Tenant-ID header.
+ * Valida el JWT del header Authorization y, lo más importante, verifica que el
+ * tenant del token coincida con el tenant resuelto por identifyTenant. Esto
+ * bloquea los tokens "cross-tenant": un token válido para el tenant A no puede
+ * reutilizarse contra el tenant B con solo cambiar el header X-Tenant-ID.
  *
- * Must run AFTER identifyTenant (it relies on req.tenant).
+ * Debe ejecutarse DESPUÉS de identifyTenant (depende de req.tenant).
  *
- * Optionally enforces a role: checkAuth('ADMIN').
+ * Opcionalmente exige un rol: checkAuth('ADMIN').
  */
 export function checkAuth(...allowedRoles: Array<'ADMIN' | 'USER'>) {
   return (req: Request, _res: Response, next: NextFunction): void => {
@@ -43,7 +43,7 @@ export function checkAuth(...allowedRoles: Array<'ADMIN' | 'USER'>) {
       throw new AppError(401, 'Invalid or expired token');
     }
 
-    // The user must legally belong to the tenant in the request.
+    // El usuario debe pertenecer legítimamente al tenant del request.
     if (payload.tenantId !== req.tenant.id) {
       throw new AppError(403, 'Token does not belong to the requested tenant');
     }

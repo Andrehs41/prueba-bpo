@@ -81,7 +81,7 @@ const recordsSlice = createSlice({
         state.error = action.payload ?? 'Failed to load records';
       })
       .addCase(createRecord.fulfilled, (state, action) => {
-        // Prepend the new record (list is ordered newest-first).
+        // Antepone el nuevo registro (la lista se ordena del más reciente al más antiguo).
         state.items.unshift(action.payload);
         state.pagination.total += 1;
       });

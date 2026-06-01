@@ -4,9 +4,9 @@ import { pool } from '../config/db';
 export interface RecordRow extends RowDataPacket {
   id: number;
   tenant_id: number;
-  tenant_seq: number; // visible, per-tenant sequential number
+  tenant_seq: number; // número secuencial visible, por tenant
   name: string;
-  amount: string; // DECIMAL is returned as string by mysql2
+  amount: string; // mysql2 devuelve DECIMAL como string
   created_at: Date;
 }
 
@@ -16,8 +16,9 @@ export interface Paginated<T> {
 }
 
 /**
- * List records for ONE tenant with limit/offset pagination.
- * tenant_id is always applied server-side - the caller cannot widen the scope.
+ * Lista los registros de UN solo tenant con paginación limit/offset.
+ * tenant_id siempre se aplica del lado del servidor; quien llama no puede
+ * ampliar el alcance.
  */
 export async function listRecordsByTenant(
   tenantId: number,
@@ -45,13 +46,14 @@ export async function listRecordsByTenant(
 }
 
 /**
- * Insert a record bound to the given tenant, assigning the next per-tenant
- * sequential number atomically.
+ * Inserta un registro asociado al tenant dado, asignando de forma atómica el
+ * siguiente número secuencial por tenant.
  *
- * Runs inside a transaction: the counter row is incremented with
- * INSERT ... ON DUPLICATE KEY UPDATE (which takes a row lock), so concurrent
- * inserts for the same tenant can never get the same tenant_seq.
- * tenant_id is injected from the server-side context, never from the body.
+ * Se ejecuta dentro de una transacción: la fila del contador se incrementa con
+ * INSERT ... ON DUPLICATE KEY UPDATE (que toma un bloqueo de fila), por lo que
+ * inserciones concurrentes para el mismo tenant nunca pueden obtener el mismo
+ * tenant_seq.
+ * tenant_id se inyecta desde el contexto del servidor, nunca desde el body.
  */
 export async function createRecordForTenant(
   tenantId: number,
@@ -62,7 +64,7 @@ export async function createRecordForTenant(
   try {
     await conn.beginTransaction();
 
-    // Atomically bump and read this tenant's counter.
+    // Incrementa y lee de forma atómica el contador de este tenant.
     await conn.query(
       `INSERT INTO tenant_record_seq (tenant_id, last_seq)
             VALUES (:tenantId, 1)

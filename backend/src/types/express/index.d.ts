@@ -1,6 +1,7 @@
 /**
- * Augment Express' Request so middlewares can safely attach the tenant
- * context and the authenticated user across the request lifecycle.
+ * Extiende el Request de Express para que los middlewares puedan adjuntar de
+ * forma segura el contexto del tenant y el usuario autenticado durante todo el
+ * ciclo de vida del request.
  */
 import 'express';
 

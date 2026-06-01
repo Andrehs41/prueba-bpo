@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 /**
- * Centralized, typed access to environment variables.
- * Fails fast at boot if a required variable is missing.
+ * Acceso centralizado y tipado a las variables de entorno.
+ * Falla de inmediato al arrancar si falta una variable requerida.
  */
 function required(name: string): string {
   const value = process.env[name];

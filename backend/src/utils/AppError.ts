@@ -1,6 +1,7 @@
 /**
- * Operational error with an HTTP status code.
- * Thrown anywhere; translated to a JSON response by the central errorHandler.
+ * Error operacional con un código de estado HTTP.
+ * Se lanza en cualquier punto; el errorHandler central lo traduce a una
+ * respuesta JSON.
  */
 export class AppError extends Error {
   constructor(public readonly statusCode: number, message: string) {

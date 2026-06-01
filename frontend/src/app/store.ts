@@ -13,9 +13,10 @@ const appReducer = combineReducers({
 export type RootState = ReturnType<typeof appReducer>;
 
 /**
- * Root reducer wrapper: when `resetStore` is dispatched, we pass `undefined`
- * state to every slice, so each one rebuilds its own initialState. This is the
- * single source of truth for wiping tenant-scoped data (anti data-bleeding).
+ * Envoltura del root reducer: cuando se despacha `resetStore`, pasamos el estado
+ * `undefined` a cada slice, de modo que cada uno reconstruye su propio
+ * initialState. Esta es la única fuente de verdad para limpiar los datos
+ * acotados al tenant (anti data-bleeding).
  */
 const rootReducer = (state: RootState | undefined, action: Action): RootState => {
   if (action.type === resetStore.type) {
