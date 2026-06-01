@@ -5,37 +5,54 @@ interface Props {
   records: RecordItem[];
 }
 
+// Formato de moneda en pesos colombianos.
+const currency = new Intl.NumberFormat('es-CO', {
+  style: 'currency',
+  currency: 'COP',
+  maximumFractionDigits: 0,
+});
+
+const dateFmt = new Intl.DateTimeFormat('es-CO', {
+  day: '2-digit',
+  month: 'short',
+  year: 'numeric',
+});
+
 /**
- * Pure presentational table. Wrapped in React.memo so it only re-renders when
- * the `records` array reference actually changes - not on every keystroke in
- * the parent's filter input.
+ * Tabla presentacional pura. Envuelta en React.memo para que solo se vuelva a
+ * renderizar cuando cambia la referencia de `records`, no en cada tecla del
+ * filtro del componente padre.
  */
 function RecordsTableBase({ records }: Props) {
   if (records.length === 0) {
-    return <p className="muted">No records match your filter.</p>;
+    return <p className="empty">No hay registros que coincidan con el filtro.</p>;
   }
 
   return (
-    <table className="records">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Amount</th>
-          <th>Created</th>
-        </tr>
-      </thead>
-      <tbody>
-        {records.map((r) => (
-          <tr key={r.id}>
-            <td>{r.id}</td>
-            <td>{r.name}</td>
-            <td>${Number(r.amount).toLocaleString()}</td>
-            <td>{new Date(r.created_at).toLocaleDateString()}</td>
+    <div className="table-wrap">
+      <table className="records">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th className="num">Monto</th>
+            <th>Fecha de creación</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {records.map((r) => (
+            <tr key={r.id}>
+              <td className="muted">{r.id}</td>
+              <td>{r.name}</td>
+              <td className={`num ${Number(r.amount) < 0 ? 'negative' : ''}`}>
+                {currency.format(Number(r.amount))}
+              </td>
+              <td className="muted">{dateFmt.format(new Date(r.created_at))}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

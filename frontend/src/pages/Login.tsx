@@ -3,30 +3,60 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../app/hooks';
 import { login, clearAuthError } from '../features/auth/authSlice';
 import { resetStore } from '../app/resetAction';
+import { api } from '../api/axios';
+
+interface TenantOption {
+  id: number;
+  slug: string;
+  name: string;
+}
 
 /**
- * Login page (no tenant in the URL). The user picks the tenant here; on success
- * we redirect to /:tenantSlug/dashboard.
+ * Página de login (sin tenant en la URL). La empresa se elige desde un selector
+ * que se llena con GET /tenants. Al autenticar se navega a /:slug/dashboard.
  */
 export default function Login() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { status, error } = useAppSelector((s) => s.auth);
 
-  const [tenantSlug, setTenantSlug] = useState('acme');
-  const [email, setEmail] = useState('admin@acme.com');
-  const [password, setPassword] = useState('admin123');
+  const [tenants, setTenants] = useState<TenantOption[]>([]);
+  const [loadingTenants, setLoadingTenants] = useState(true);
 
-  // Landing on /login means "fresh session": wipe any residual tenant data.
+  // Campos vacíos: nunca se prellenan credenciales.
+  const [tenantSlug, setTenantSlug] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  // Entrar a /login = sesión nueva: se limpia cualquier dato residual del tenant.
   useEffect(() => {
     dispatch(resetStore());
   }, [dispatch]);
+
+  // Cargar la lista de empresas disponibles para el selector.
+  useEffect(() => {
+    let active = true;
+    api
+      .get<TenantOption[]>('/tenants')
+      .then(({ data }) => {
+        if (active) setTenants(data);
+      })
+      .catch(() => {
+        /* el error se refleja al deshabilitar el selector */
+      })
+      .finally(() => {
+        if (active) setLoadingTenants(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     dispatch(clearAuthError());
     const result = await dispatch(
-      login({ tenantSlug: tenantSlug.trim(), email: email.trim(), password })
+      login({ tenantSlug, email: email.trim(), password })
     );
     if (login.fulfilled.match(result)) {
       navigate(`/${result.payload.tenant.slug}/dashboard`);
@@ -34,38 +64,62 @@ export default function Login() {
   }
 
   return (
-    <div className="centered">
-      <form className="card" onSubmit={handleSubmit}>
-        <h1>Multi-Tenant Login</h1>
+    <div className="auth-screen">
+      <form className="auth-card" onSubmit={handleSubmit}>
+        <div className="brand">
+          <span className="brand-dot" />
+          <h1>Plataforma Multi-Tenant</h1>
+          <p className="subtitle">Inicia sesión en tu empresa</p>
+        </div>
 
         <label>
-          Tenant slug
-          <input value={tenantSlug} onChange={(e) => setTenantSlug(e.target.value)} required />
+          Empresa
+          <select
+            value={tenantSlug}
+            onChange={(e) => setTenantSlug(e.target.value)}
+            disabled={loadingTenants}
+            required
+          >
+            <option value="" disabled>
+              {loadingTenants ? 'Cargando empresas…' : 'Selecciona una empresa'}
+            </option>
+            {tenants.map((t) => (
+              <option key={t.id} value={t.slug}>
+                {t.name}
+              </option>
+            ))}
+          </select>
         </label>
+
         <label>
-          Email
-          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+          Correo electrónico
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="nombre@empresa.com"
+            autoComplete="off"
+            required
+          />
         </label>
+
         <label>
-          Password
+          Contraseña
           <input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            autoComplete="off"
             required
           />
         </label>
 
         {error && <p className="error">{error}</p>}
 
-        <button type="submit" disabled={status === 'loading'}>
-          {status === 'loading' ? 'Signing in…' : 'Sign in'}
+        <button type="submit" disabled={status === 'loading' || !tenantSlug}>
+          {status === 'loading' ? 'Ingresando…' : 'Ingresar'}
         </button>
-
-        <p className="hint">
-          Seed: <code>acme</code> / admin@acme.com / admin123 (ADMIN) ·
-          user@acme.com / user123 (USER) · <code>globex</code> / admin@globex.com / admin123
-        </p>
       </form>
     </div>
   );

@@ -16,6 +16,7 @@ export const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0,
   namedPlaceholders: true,
+  charset: 'utf8mb4',
 });
 
 /** Quick connectivity check used at server boot. */

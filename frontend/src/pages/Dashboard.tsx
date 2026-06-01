@@ -20,12 +20,12 @@ export default function Dashboard() {
   const [newName, setNewName] = useState('');
   const [newAmount, setNewAmount] = useState('');
 
-  // Load this tenant's records on mount.
+  // Cargar los registros del tenant al montar.
   useEffect(() => {
     dispatch(fetchRecords({ limit: 100, offset: 0 }));
   }, [dispatch]);
 
-  // Local filtering, recomputed only when data or debounced term changes.
+  // Filtrado local, recalculado solo cuando cambian los datos o el término.
   const filteredRecords = useMemo(() => {
     const term = debouncedFilter.trim().toLowerCase();
     if (!term) return items;
@@ -33,7 +33,7 @@ export default function Dashboard() {
   }, [items, debouncedFilter]);
 
   function handleLogout() {
-    // Global reset: wipe ALL tenant data from memory, then go to /login.
+    // Reset global: borra TODOS los datos del tenant en memoria y vuelve a /login.
     dispatch(resetStore());
     navigate('/login');
   }
@@ -51,56 +51,61 @@ export default function Dashboard() {
   const isAdmin = user?.role === 'ADMIN';
 
   return (
-    <div className="container">
+    <div className="app-shell">
       <header className="topbar">
-        <div>
-          <h1>{tenant?.name}</h1>
-          <span className="muted">
-            {user?.email} · <strong>{user?.role}</strong> · tenant: {tenant?.slug}
-          </span>
+        <div className="topbar-info">
+          <span className="brand-dot small" />
+          <div>
+            <h1>{tenant?.name}</h1>
+            <span className="muted">
+              {user?.email} · <span className={`badge ${isAdmin ? 'badge-admin' : 'badge-user'}`}>{user?.role}</span>
+            </span>
+          </div>
         </div>
         <button className="secondary" onClick={handleLogout}>
-          Logout
+          Cerrar sesión
         </button>
       </header>
 
-      {isAdmin && (
-        <form className="card inline" onSubmit={handleCreate}>
-          <strong>New record (ADMIN only)</strong>
+      <main className="container">
+        {isAdmin && (
+          <form className="panel create-form" onSubmit={handleCreate}>
+            <strong className="panel-title">Nuevo registro</strong>
+            <input
+              placeholder="Nombre del registro"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              required
+            />
+            <input
+              placeholder="Monto"
+              type="number"
+              step="0.01"
+              min="0"
+              value={newAmount}
+              onChange={(e) => setNewAmount(e.target.value)}
+            />
+            <button type="submit">Agregar</button>
+          </form>
+        )}
+
+        <div className="toolbar">
           <input
-            placeholder="Name"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            required
+            className="search"
+            placeholder="Filtrar por nombre…"
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
           />
-          <input
-            placeholder="Amount"
-            type="number"
-            step="0.01"
-            min="0"
-            value={newAmount}
-            onChange={(e) => setNewAmount(e.target.value)}
-          />
-          <button type="submit">Add</button>
-        </form>
-      )}
+          <span className="muted">
+            Mostrando {filteredRecords.length} de {pagination.total} registros
+          </span>
+        </div>
 
-      <div className="toolbar">
-        <input
-          className="search"
-          placeholder="Filter by name…"
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-        />
-        <span className="muted">
-          Showing {filteredRecords.length} of {pagination.total}
-        </span>
-      </div>
+        {status === 'loading' && <p className="muted">Cargando registros…</p>}
+        {error && <p className="error">{error}</p>}
 
-      {status === 'loading' && <p>Loading…</p>}
-      {error && <p className="error">{error}</p>}
-
-      <RecordsTable records={filteredRecords} />
+        <RecordsTable records={filteredRecords} />
+      </main>
     </div>
   );
 }

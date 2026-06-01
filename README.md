@@ -105,13 +105,22 @@ Abre **http://localhost:5173** → te redirige a `/login`.
 
 ## Credenciales de prueba (data dummy)
 
-| Tenant (slug) | Email              | Password   | Rol   |
-|---------------|--------------------|------------|-------|
-| `acme`        | admin@acme.com     | `admin123` | ADMIN |
-| `acme`        | user@acme.com      | `user123`  | USER  |
-| `globex`      | admin@globex.com   | `admin123` | ADMIN |
+Hay **6 empresas** sembradas. En el login se eligen desde un selector (cargado
+con `GET /tenants`). El patrón de correos es `admin@<slug>.com` y
+`usuario@<slug>.com`. Contraseñas: **ADMIN → `admin123`**, **USER → `user123`**.
 
-Tras el login se navega a `/:tenantSlug/dashboard` (p. ej. `/acme/dashboard`).
+| Empresa                       | slug                      | Usuarios sembrados        |
+|-------------------------------|---------------------------|---------------------------|
+| Distribuidora Andina S.A.S.   | `distribuidora-andina`    | admin + usuario           |
+| Café Monteverde               | `cafe-monteverde`         | admin + usuario           |
+| Transportes Rápidos Ltda.     | `transportes-rapidos`     | admin + usuario           |
+| Clínica Vida Sana             | `clinica-vida-sana`       | admin                     |
+| Constructora Horizonte        | `constructora-horizonte`  | admin                     |
+| Moda Urbana                   | `moda-urbana`             | admin                     |
+
+Ejemplo: `admin@distribuidora-andina.com` / `admin123`.
+Tras el login se navega a `/:tenantSlug/dashboard`
+(p. ej. `/distribuidora-andina/dashboard`).
 
 ---
 
@@ -122,6 +131,7 @@ Base: `http://localhost:4000/api/v1`
 | Método | Ruta            | Auth                 | Descripción                                            |
 |--------|-----------------|----------------------|--------------------------------------------------------|
 | GET    | `/health`       | —                    | Healthcheck                                            |
+| GET    | `/tenants`      | — (público)          | Lista de empresas (id/slug/name) para el selector      |
 | POST   | `/auth/login`   | `X-Tenant-ID`        | Login dentro del tenant; devuelve JWT                  |
 | GET    | `/records`      | JWT + `X-Tenant-ID`  | Lista records **solo del tenant** (`?limit=&offset=`)  |
 | POST   | `/records`      | JWT (ADMIN) + tenant | Crea record vinculado al tenant automáticamente        |
@@ -134,12 +144,12 @@ Todas las peticiones a `/records` y `/auth/login` requieren la cabecera
 ```bash
 # Login
 TOKEN=$(curl -s -X POST http://localhost:4000/api/v1/auth/login \
-  -H "Content-Type: application/json" -H "X-Tenant-ID: acme" \
-  -d '{"email":"admin@acme.com","password":"admin123"}' | jq -r .token)
+  -H "Content-Type: application/json" -H "X-Tenant-ID: distribuidora-andina" \
+  -d '{"email":"admin@distribuidora-andina.com","password":"admin123"}' | jq -r .token)
 
 # Listar records del tenant (paginado)
 curl "http://localhost:4000/api/v1/records?limit=5&offset=0" \
-  -H "X-Tenant-ID: acme" -H "Authorization: Bearer $TOKEN"
+  -H "X-Tenant-ID: distribuidora-andina" -H "Authorization: Bearer $TOKEN"
 ```
 
 ---

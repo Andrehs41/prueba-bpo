@@ -9,6 +9,17 @@ interface TenantRow extends RowDataPacket {
 }
 
 /**
+ * Public list of tenants (id, slug, name) for the login selector.
+ * Exposes no sensitive data; ordered alphabetically by name.
+ */
+export async function listTenants(): Promise<TenantContext[]> {
+  const [rows] = await pool.query<TenantRow[]>(
+    `SELECT id, slug, name FROM tenants ORDER BY name ASC`
+  );
+  return rows.map((t) => ({ id: t.id, slug: t.slug, name: t.name }));
+}
+
+/**
  * Resolve a tenant by the value coming from the X-Tenant-ID header.
  * The header may carry either the numeric id or the slug, so we accept both.
  * Returns null when no tenant matches (caller decides the HTTP response).
