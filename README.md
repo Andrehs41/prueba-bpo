@@ -105,22 +105,28 @@ Abre **http://localhost:5173** → te redirige a `/login`.
 
 ## Credenciales de prueba (data dummy)
 
-Hay **6 empresas** sembradas. En el login se eligen desde un selector (cargado
-con `GET /tenants`). El patrón de correos es `admin@<slug>.com` y
-`usuario@<slug>.com`. Contraseñas: **ADMIN → `admin123`**, **USER → `user123`**.
+Hay **6 empresas** sembradas. En el login se elige la empresa desde un selector
+(cargado con `GET /tenants`) y se ingresa el correo + contraseña.
 
-| Empresa                       | slug                      | Usuarios sembrados        |
-|-------------------------------|---------------------------|---------------------------|
-| Distribuidora Andina S.A.S.   | `distribuidora-andina`    | admin + usuario           |
-| Café Monteverde               | `cafe-monteverde`         | admin + usuario           |
-| Transportes Rápidos Ltda.     | `transportes-rapidos`     | admin + usuario           |
-| Clínica Vida Sana             | `clinica-vida-sana`       | admin                     |
-| Constructora Horizonte        | `constructora-horizonte`  | admin                     |
-| Moda Urbana                   | `moda-urbana`             | admin                     |
+**Contraseñas:** los usuarios **ADMIN** usan `admin123` · los **USER** usan `user123`.
 
-Ejemplo: `admin@distribuidora-andina.com` / `admin123`.
-Tras el login se navega a `/:tenantSlug/dashboard`
-(p. ej. `/distribuidora-andina/dashboard`).
+Lista completa de correos (listos para copiar y pegar):
+
+| Empresa | Correo | Rol | Contraseña |
+|---------|--------|-----|------------|
+| Distribuidora Andina S.A.S. | `admin@distribuidora-andina.com`   | ADMIN | `admin123` |
+| Distribuidora Andina S.A.S. | `usuario@distribuidora-andina.com` | USER  | `user123`  |
+| Café Monteverde             | `admin@cafe-monteverde.com`        | ADMIN | `admin123` |
+| Café Monteverde             | `usuario@cafe-monteverde.com`      | USER  | `user123`  |
+| Transportes Rápidos Ltda.   | `admin@transportes-rapidos.com`    | ADMIN | `admin123` |
+| Transportes Rápidos Ltda.   | `usuario@transportes-rapidos.com`  | USER  | `user123`  |
+| Clínica Vida Sana           | `admin@clinica-vida-sana.com`      | ADMIN | `admin123` |
+| Constructora Horizonte      | `admin@constructora-horizonte.com` | ADMIN | `admin123` |
+| Moda Urbana                 | `admin@moda-urbana.com`            | ADMIN | `admin123` |
+
+> Nota: el rol **ADMIN** puede crear registros (`POST /records`); el rol **USER**
+> solo puede consultarlos. Tras el login se navega a `/:tenantSlug/dashboard`
+> (p. ej. `/distribuidora-andina/dashboard`).
 
 ---
 
