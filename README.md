@@ -182,6 +182,16 @@ curl "http://localhost:4000/api/v1/records?limit=5&offset=0" \
   petición. El store se inyecta con `injectStore(store)` para evitar imports
   circulares y leer siempre el estado vivo.
 
+### Secuencial por tenant
+- La columna `#` que ve el usuario **no** es el `id` global (que se comparte entre
+  todos los tenants y produciría una numeración salteada). Cada empresa lleva su
+  propio consecutivo (`records.tenant_seq`, 1, 2, 3…).
+- Se mantiene con la tabla `tenant_record_seq` (un contador por tenant). Al crear
+  un registro, el contador se incrementa de forma **atómica** dentro de una
+  transacción (`INSERT … ON DUPLICATE KEY UPDATE`, que toma un lock de fila), de
+  modo que inserciones concurrentes del mismo tenant nunca repiten número.
+- El `id` global se conserva solo como PK interna estable (key en el frontend).
+
 ### Optimización de renderizado
 - Filtro local de la tabla con **debounce** (`useDebounce`, 300 ms) +
   **`useMemo`** para no recalcular el filtrado en cada tecla.

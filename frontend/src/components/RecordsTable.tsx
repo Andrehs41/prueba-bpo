@@ -42,7 +42,7 @@ function RecordsTableBase({ records }: Props) {
         <tbody>
           {records.map((r) => (
             <tr key={r.id}>
-              <td className="muted">{r.id}</td>
+              <td className="muted">{r.tenant_seq}</td>
               <td>{r.name}</td>
               <td className={`num ${Number(r.amount) < 0 ? 'negative' : ''}`}>
                 {currency.format(Number(r.amount))}

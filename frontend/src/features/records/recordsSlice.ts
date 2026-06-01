@@ -5,6 +5,7 @@ import { api } from '../../api/axios';
 export interface RecordItem {
   id: number;
   tenant_id: number;
+  tenant_seq: number;
   name: string;
   amount: string;
   created_at: string;
